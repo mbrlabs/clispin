@@ -9,27 +9,30 @@ import (
 
 // Spinner is an infinite ui spinner with status text
 type Spinner struct {
+	RefreshInterval time.Duration
+	LastFrame       string
+
 	writer *uilive.Writer
 	sprite *Sprite
 
 	running bool
-
-	dirty bool
-	text  string
+	dirty   bool
+	text    string
 }
 
 // New creates a new Spinner with the given sprite.
 // If sprite nil, a defualt sprite will be used.
 func New(sprite *Sprite) *Spinner {
 	if sprite == nil {
-		sprite = NewSprite(SpriteFrames[10])
+		sprite = NewSprite(SpriteFrames[10], (time.Millisecond * 100).Nanoseconds())
 	}
 
 	return &Spinner{
-		writer:  uilive.New(),
-		sprite:  sprite,
-		running: false,
-		dirty:   false,
+		RefreshInterval: time.Millisecond * 100,
+		writer:          uilive.New(),
+		sprite:          sprite,
+		running:         false,
+		dirty:           false,
 	}
 }
 
@@ -52,10 +55,15 @@ func (s *Spinner) Start(f func()) {
 			s.print()
 		}
 
-		time.Sleep(time.Millisecond * 100)
+		time.Sleep(s.RefreshInterval)
 	}
 
-	s.print()
+	// last frame
+	if len(s.LastFrame) > 0 {
+		fmt.Fprintln(s.writer, s.LastFrame, s.text)
+	} else {
+		s.print()
+	}
 	s.writer.Stop()
 }
 

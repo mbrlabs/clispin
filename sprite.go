@@ -19,21 +19,22 @@ var SpriteFrames = map[int][]string{
 
 // Sprite is a unicode sprite implementation.
 type Sprite struct {
+	Interval int64
+
 	frames       []string
 	currentFrame int
 
 	lastUpdate int64
-	interval   int64
 }
 
 // NewSprite creates a new sprite given the specified frames.
 // TODO: add update interval param
-func NewSprite(frames []string) *Sprite {
+func NewSprite(frames []string, interval int64) *Sprite {
 	return &Sprite{
 		frames:       frames,
 		currentFrame: 0,
 		lastUpdate:   -1,
-		interval:     (time.Millisecond * 100).Nanoseconds(),
+		Interval:     interval,
 	}
 }
 
@@ -45,7 +46,14 @@ func (s *Sprite) Frame() string {
 // Update updates the animation.
 // If the function returns true the current frame changed.
 func (s *Sprite) Update() bool {
-	if (time.Now().UnixNano()-s.lastUpdate) >= s.interval || s.lastUpdate < 0 {
+	// handle first update
+	if s.lastUpdate == -1 {
+		s.lastUpdate = time.Now().UnixNano()
+		return false
+	}
+
+	delta := time.Now().UnixNano() - s.lastUpdate
+	if delta >= s.Interval {
 		s.lastUpdate = time.Now().UnixNano()
 		if s.currentFrame < len(s.frames)-1 {
 			s.currentFrame++

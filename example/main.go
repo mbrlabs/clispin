@@ -8,6 +8,8 @@ import (
 
 func spinner() {
 	spinner := clispin.New(nil)
+	spinner.LastFrame = "✓"
+
 	spinner.Start(func() {
 		spinner.Printf("Downloading file %d/2", 1)
 		time.Sleep(time.Second)
