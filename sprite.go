@@ -2,6 +2,7 @@ package clispin
 
 import "time"
 
+// SpriteFrames are a premade sets of sprite frames.
 var SpriteFrames = map[int][]string{
 	0:  {"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"},
 	1:  {"←", "↑", "→", "↓"},
@@ -16,6 +17,7 @@ var SpriteFrames = map[int][]string{
 	10: {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"},
 }
 
+// Sprite is a unicode sprite implementation.
 type Sprite struct {
 	frames       []string
 	currentFrame int
@@ -24,6 +26,8 @@ type Sprite struct {
 	interval   int64
 }
 
+// NewSprite creates a new sprite given the specified frames.
+// TODO: add update interval param
 func NewSprite(frames []string) *Sprite {
 	return &Sprite{
 		frames:       frames,
@@ -33,10 +37,13 @@ func NewSprite(frames []string) *Sprite {
 	}
 }
 
+// Frame returns the current frame
 func (s *Sprite) Frame() string {
 	return s.frames[s.currentFrame]
 }
 
+// Update updates the animation.
+// If the function returns true the current frame changed.
 func (s *Sprite) Update() bool {
 	if (time.Now().UnixNano()-s.lastUpdate) >= s.interval || s.lastUpdate < 0 {
 		s.lastUpdate = time.Now().UnixNano()

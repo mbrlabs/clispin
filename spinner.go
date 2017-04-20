@@ -7,6 +7,7 @@ import (
 	"github.com/mbrlabs/uilive"
 )
 
+// Spinner is an infinite ui spinner with status text
 type Spinner struct {
 	writer *uilive.Writer
 	sprite *Sprite
@@ -17,6 +18,8 @@ type Spinner struct {
 	text  string
 }
 
+// New creates a new Spinner with the given sprite.
+// If sprite nil, a defualt sprite will be used.
 func New(sprite *Sprite) *Spinner {
 	if sprite == nil {
 		sprite = NewSprite(SpriteFrames[10])
@@ -30,6 +33,9 @@ func New(sprite *Sprite) *Spinner {
 	}
 }
 
+// Start starts the spinner while executing the provided function.
+// This functions blocks until the end of the function, which runs in
+// it's own goroutine.
 func (s *Spinner) Start(f func()) {
 	s.running = true
 	s.writer.Start()
@@ -53,11 +59,13 @@ func (s *Spinner) Start(f func()) {
 	s.writer.Stop()
 }
 
+// Print updates the status text of the spinner
 func (s *Spinner) Print(text string) {
 	s.text = text
 	s.dirty = true
 }
 
+// Printf updates the status text of the spinner
 func (s *Spinner) Printf(format string, p ...interface{}) {
 	s.Print(fmt.Sprintf(format, p...))
 }
