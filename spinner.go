@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gosuri/uilive"
+	"github.com/mbrlabs/uilive"
 )
 
 type Spinner struct {
@@ -20,7 +20,7 @@ type Spinner struct {
 
 func New(sprite *Sprite) *Spinner {
 	if sprite == nil {
-		sprite = NewSprite(Sprites[12])
+		sprite = NewSprite(SpriteFrames[10])
 	}
 
 	return &Spinner{
