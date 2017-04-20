@@ -13,9 +13,8 @@ type Spinner struct {
 
 	running bool
 
-	dirty            bool
-	text             string
-	lastSpriteUpdate int64
+	dirty bool
+	text  string
 }
 
 func New(sprite *Sprite) *Spinner {
@@ -34,7 +33,6 @@ func New(sprite *Sprite) *Spinner {
 func (s *Spinner) Start(f func()) {
 	s.running = true
 	s.writer.Start()
-	s.lastSpriteUpdate = time.Now().UnixNano()
 
 	// start user action
 	go func() {
@@ -44,22 +42,7 @@ func (s *Spinner) Start(f func()) {
 
 	// print spinner
 	for s.running {
-		updateRequired := false
-
-		// update text if spinner sprite needs to be updated
-		now := time.Now().UnixNano()
-		if now-s.lastSpriteUpdate >= s.sprite.updateInterval {
-			s.sprite.next()
-			s.lastSpriteUpdate = now
-			updateRequired = true
-		}
-
-		// update text if dirty flag set
-		if s.dirty {
-			updateRequired = true
-		}
-
-		if updateRequired {
+		if s.sprite.Update() || s.dirty {
 			s.print()
 		}
 
@@ -77,5 +60,5 @@ func (s *Spinner) Printf(format string, p ...interface{}) {
 }
 
 func (s *Spinner) print() {
-	fmt.Fprintln(s.writer, s.sprite.current()+" "+s.text)
+	fmt.Fprintln(s.writer, s.sprite.Frame()+" "+s.text)
 }

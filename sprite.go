@@ -17,27 +17,37 @@ var SpriteFrames = map[int][]string{
 }
 
 type Sprite struct {
-	frames         []string
-	curIndex       int
-	updateInterval int64 // update interval in ns
+	frames       []string
+	currentFrame int
+
+	lastUpdate int64
+	interval   int64
 }
 
 func NewSprite(frames []string) *Sprite {
 	return &Sprite{
-		frames:         frames,
-		curIndex:       0,
-		updateInterval: (time.Millisecond * 100).Nanoseconds(),
+		frames:       frames,
+		currentFrame: 0,
+		lastUpdate:   -1,
+		interval:     (time.Millisecond * 100).Nanoseconds(),
 	}
 }
 
-func (s *Sprite) current() string {
-	return s.frames[s.curIndex]
+func (s *Sprite) Frame() string {
+	return s.frames[s.currentFrame]
 }
 
-func (s *Sprite) next() {
-	if s.curIndex < len(s.frames)-1 {
-		s.curIndex++
-	} else {
-		s.curIndex = 0
+func (s *Sprite) Update() bool {
+	if (time.Now().UnixNano()-s.lastUpdate) >= s.interval || s.lastUpdate < 0 {
+		s.lastUpdate = time.Now().UnixNano()
+		if s.currentFrame < len(s.frames)-1 {
+			s.currentFrame++
+		} else {
+			s.currentFrame = 0
+		}
+
+		return true
 	}
+
+	return false
 }
