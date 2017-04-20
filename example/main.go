@@ -6,7 +6,7 @@ import (
 	"github.com/mbrlabs/clispin"
 )
 
-func main() {
+func spinner() {
 	spinner := clispin.New(nil)
 	spinner.Start(func() {
 		spinner.Printf("Downloading file %d/2", 1)
@@ -14,8 +14,13 @@ func main() {
 		spinner.Printf("Downloading file %d/2", 2)
 		time.Sleep(time.Second)
 
-		spinner.Printf("Processing files")
+		spinner.Print("Processing files")
 		time.Sleep(time.Second)
 		spinner.Print("Done")
 	})
+}
+
+func main() {
+	spinner()
+	spinner()
 }

@@ -48,6 +48,9 @@ func (s *Spinner) Start(f func()) {
 
 		time.Sleep(time.Millisecond * 100)
 	}
+
+	s.print()
+	s.writer.Stop()
 }
 
 func (s *Spinner) Print(text string) {
@@ -60,5 +63,5 @@ func (s *Spinner) Printf(format string, p ...interface{}) {
 }
 
 func (s *Spinner) print() {
-	fmt.Fprintln(s.writer, s.sprite.Frame()+" "+s.text)
+	fmt.Fprintln(s.writer, s.sprite.Frame(), s.text)
 }
