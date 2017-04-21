@@ -37,34 +37,44 @@ func New(sprite *Sprite) *Spinner {
 }
 
 // Start starts the spinner while executing the provided function.
-// This functions blocks until the end of the function, which runs in
-// it's own goroutine.
+// This functions blocks until the end of the supplied function. The rendering of
+// the spinner + text is done on a different goroutine. The user function will be
+// executed on the main thread.
 func (s *Spinner) Start(f func()) {
-	s.running = true
-	s.writer.Start()
+	done := make(chan bool)
 
-	// start user action
+	// render in own go routine
 	go func() {
-		f()
-		s.running = false
-	}()
+		s.running = true
+		s.writer.Start()
+		defer s.writer.Stop()
 
-	// print spinner
-	for s.running {
-		if s.sprite.Update() || s.dirty {
+		// render loop
+		for s.running {
+			if s.sprite.Update() || s.dirty {
+				s.print()
+			}
+
+			time.Sleep(s.RefreshInterval)
+		}
+
+		// render last frame
+		if len(s.LastFrame) > 0 {
+			fmt.Fprintln(s.writer, s.LastFrame, s.text)
+		} else {
 			s.print()
 		}
 
-		time.Sleep(s.RefreshInterval)
-	}
+		// done
+		done <- true
+	}()
 
-	// last frame
-	if len(s.LastFrame) > 0 {
-		fmt.Fprintln(s.writer, s.LastFrame, s.text)
-	} else {
-		s.print()
-	}
-	s.writer.Stop()
+	// execute user function on main thread
+	f()
+
+	// wait until render loop exists
+	s.running = false
+	<-done
 }
 
 // Print updates the status text of the spinner
