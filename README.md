@@ -1,10 +1,11 @@
- # clispin
- Wrap your functions in elegant unicode spinners.
+# clispin [![GoDoc](https://godoc.org/github.com/mbrlabs/clispin?status.svg)](https://godoc.org/github.com/mbrlabs/clispin)
+Clispin is a Go library, that makes it ridiculously easy to integrate fancy unicode spinners in your cli app.
 
  ## Usage
 ```go
 spinner := clispin.New(nil)
 spinner.Start(func() {
+    // Do your work here. Update spinner text with Print or Printf
     spinner.Printf("Downloading file %d/2", 1)
     time.Sleep(time.Second)
     spinner.Printf("Downloading file %d/2", 2)
