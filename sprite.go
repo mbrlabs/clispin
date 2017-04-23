@@ -1,6 +1,9 @@
 package clispin
 
-import "time"
+import (
+	"github.com/fatih/color"
+	"time"
+)
 
 // SpriteFrames are a premade sets of sprite frames.
 var SpriteFrames = map[int][]string{
@@ -21,20 +24,22 @@ var SpriteFrames = map[int][]string{
 type Sprite struct {
 	Interval int64
 
-	frames       []string
-	currentFrame int
+	frames []string
+	color  *color.Color
 
-	lastUpdate int64
+	currentFrame int
+	lastUpdate   int64
 }
 
 // NewSprite creates a new sprite given the specified frames.
 // TODO: add update interval param
-func NewSprite(frames []string, interval int64) *Sprite {
+func NewSprite(frames []string) *Sprite {
 	return &Sprite{
+		Interval:     (time.Millisecond * 100).Nanoseconds(),
+		color:        nil,
 		frames:       frames,
 		currentFrame: 0,
 		lastUpdate:   -1,
-		Interval:     interval,
 	}
 }
 

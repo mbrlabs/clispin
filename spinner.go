@@ -4,7 +4,21 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/mbrlabs/uilive"
+)
+
+type Color int
+
+const (
+	ColorBlack   = Color(color.FgBlack)
+	ColorRed     = Color(color.FgRed)
+	ColorGreen   = Color(color.FgGreen)
+	ColorYellow  = Color(color.FgYellow)
+	ColorBlue    = Color(color.FgBlue)
+	ColorMagenta = Color(color.FgMagenta)
+	ColorCyan    = Color(color.FgCyan)
+	ColorWhite   = Color(color.FgWhite)
 )
 
 // Spinner is an infinite ui spinner with status text
@@ -24,7 +38,7 @@ type Spinner struct {
 // If sprite nil, a defualt sprite will be used.
 func New(sprite *Sprite) *Spinner {
 	if sprite == nil {
-		sprite = NewSprite(SpriteFrames[10], (time.Millisecond * 100).Nanoseconds())
+		sprite = NewSprite(SpriteFrames[10])
 	}
 
 	return &Spinner{
@@ -52,7 +66,7 @@ func (s *Spinner) Start(f func()) {
 		// render loop
 		for s.running {
 			if s.sprite.Update() || s.dirty {
-				s.print()
+				s.print(s.sprite.Frame())
 			}
 
 			time.Sleep(s.RefreshInterval)
@@ -60,10 +74,11 @@ func (s *Spinner) Start(f func()) {
 
 		// render last frame
 		if len(s.LastFrame) > 0 {
-			fmt.Fprintln(s.writer, s.LastFrame, s.text)
+			s.print(s.LastFrame)
 		} else {
-			s.print()
+			s.print(s.sprite.Frame())
 		}
+		s.writer.Flush()
 
 		// done
 		done <- true
@@ -77,6 +92,11 @@ func (s *Spinner) Start(f func()) {
 	<-done
 }
 
+// Color sets the color for the spinner sprite
+func (s *Spinner) Color(c Color) {
+	s.sprite.color = color.New(color.Attribute(c))
+}
+
 // Print updates the status text of the spinner
 func (s *Spinner) Print(text string) {
 	s.text = text
@@ -88,6 +108,13 @@ func (s *Spinner) Printf(format string, p ...interface{}) {
 	s.Print(fmt.Sprintf(format, p...))
 }
 
-func (s *Spinner) print() {
-	fmt.Fprintln(s.writer, s.sprite.Frame(), s.text)
+func (s *Spinner) print(frame string) {
+	if s.sprite.color != nil {
+		s.sprite.color.Fprintf(s.writer, frame) // sprite with color
+	} else {
+		fmt.Fprintf(s.writer, frame) // sprite without color
+	}
+
+	// text
+	fmt.Fprintf(s.writer, " "+s.text+"\n")
 }

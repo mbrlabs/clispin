@@ -6,9 +6,9 @@ import (
 	"github.com/mbrlabs/clispin"
 )
 
-func spinner() {
+func spinner(success bool) {
 	spinner := clispin.New(nil)
-	spinner.LastFrame = "✓"
+	spinner.Color(clispin.ColorCyan)
 
 	spinner.Start(func() {
 		spinner.Printf("Downloading file %d/2", 1)
@@ -18,11 +18,20 @@ func spinner() {
 
 		spinner.Print("Processing files")
 		time.Sleep(time.Second)
-		spinner.Print("Done")
+
+		if success {
+			spinner.LastFrame = "✓"
+			spinner.Color(clispin.ColorGreen)
+			spinner.Print("Success")
+		} else {
+			spinner.LastFrame = "✕"
+			spinner.Color(clispin.ColorRed)
+			spinner.Print("Failure")
+		}
 	})
 }
 
 func main() {
-	spinner()
-	spinner()
+	spinner(true)
+	spinner(false)
 }
