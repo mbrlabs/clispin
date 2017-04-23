@@ -11,6 +11,7 @@ import (
 type Color int
 
 const (
+	ColorNone    = -1
 	ColorBlack   = Color(color.FgBlack)
 	ColorRed     = Color(color.FgRed)
 	ColorGreen   = Color(color.FgGreen)
@@ -94,7 +95,11 @@ func (s *Spinner) Start(f func()) {
 
 // Color sets the color for the spinner sprite
 func (s *Spinner) Color(c Color) {
-	s.sprite.color = color.New(color.Attribute(c))
+	if c == -1 {
+		s.sprite.color = nil
+	} else {
+		s.sprite.color = color.New(color.Attribute(c))
+	}
 }
 
 // Print updates the status text of the spinner
