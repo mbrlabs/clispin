@@ -20,11 +20,11 @@ func spinner(success bool) {
 		time.Sleep(time.Second)
 
 		if success {
-			spinner.LastFrame = "✓"
+			spinner.LastFrame = "✔"
 			spinner.Color(clispin.ColorGreen)
 			spinner.Print("Success")
 		} else {
-			spinner.LastFrame = "✕"
+			spinner.LastFrame = "✖"
 			spinner.Color(clispin.ColorRed)
 			spinner.Print("Failure")
 		}
