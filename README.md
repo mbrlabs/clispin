@@ -1,7 +1,18 @@
-# clispin [![](https://travis-ci.org/mbrlabs/clispin.svg?branch=master)](https://travis-ci.org/mbrlabs/clispin) [![GoDoc](https://godoc.org/github.com/mbrlabs/clispin?status.svg)](https://godoc.org/github.com/mbrlabs/clispin)
-Clispin is a Go library, that makes it ridiculously easy to integrate fancy unicode spinners in your app.
+<p align="center">
+  <img src="demo.gif">
+</p>
 
-![Demo](https://raw.githubusercontent.com/mbrlabs/clispin/master/demo.gif)
+<p align="center">
+  <a href="https://travis-ci.org/mbrlabs/clispin">
+      <img src="https://travis-ci.org/mbrlabs/clispin.svg?branch=master" alt="Travis status">
+  </a>
+  <a href="https://godoc.org/github.com/mbrlabs/clispin">
+      <img src="https://godoc.org/github.com/mbrlabs/clispin?status.svg" alt="Godoc">
+  </a>
+</p>
+
+# clispin
+Clispin is a Go library, that makes it ridiculously easy to integrate fancy unicode spinners in your app.
 
  ## Usage
 ```go
