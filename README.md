@@ -1,6 +1,8 @@
 # clispin [![GoDoc](https://godoc.org/github.com/mbrlabs/clispin?status.svg)](https://godoc.org/github.com/mbrlabs/clispin)
 Clispin is a Go library, that makes it ridiculously easy to integrate fancy unicode spinners in your cli app.
 
+![Demo](https://raw.githubusercontent.com/mbrlabs/clispin/master/demo.gif)
+
  ## Usage
 ```go
 spinner := clispin.New(nil)

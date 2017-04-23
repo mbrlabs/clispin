@@ -6,8 +6,8 @@ import (
 )
 
 func TestSprite(t *testing.T) {
-	interval := time.Millisecond.Nanoseconds() * 500 // 500 ms
-	sprite := NewSprite([]string{"1", "2", "3"}, interval)
+	sprite := NewSprite([]string{"1", "2", "3"})
+	sprite.Interval = time.Millisecond.Nanoseconds() * 500 // 500 ms
 
 	// no update
 	if sprite.Update() || sprite.Frame() != "1" {
