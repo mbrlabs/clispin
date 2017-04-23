@@ -2,6 +2,7 @@ package clispin
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/fatih/color"
@@ -30,6 +31,7 @@ type Spinner struct {
 	writer *uilive.Writer
 	sprite *Sprite
 
+	mutex   *sync.Mutex
 	running bool
 	dirty   bool
 	text    string
@@ -48,6 +50,7 @@ func New(sprite *Sprite) *Spinner {
 		sprite:          sprite,
 		running:         false,
 		dirty:           false,
+		mutex:           &sync.Mutex{},
 	}
 }
 
@@ -60,41 +63,49 @@ func (s *Spinner) Start(f func()) {
 
 	// render in own go routine
 	go func() {
+		s.mutex.Lock()
 		s.running = true
 		s.writer.Start()
+		s.mutex.Unlock()
 		defer s.writer.Stop()
 
 		// render loop
 		for s.running {
+			s.mutex.Lock()
 			if s.sprite.Update() || s.dirty {
+				s.dirty = false
 				s.print(s.sprite.Frame())
 			}
+			s.mutex.Unlock()
 
 			time.Sleep(s.RefreshInterval)
 		}
 
 		// render last frame
+		s.mutex.Lock()
 		if len(s.LastFrame) > 0 {
 			s.print(s.LastFrame)
 		} else {
 			s.print(s.sprite.Frame())
 		}
 		s.writer.Flush()
+		s.mutex.Unlock()
 
 		// done
 		done <- true
 	}()
 
-	// execute user function on main thread
-	f()
+	f() // execute user function on main thread
 
-	// wait until render loop exists
 	s.running = false
-	<-done
+	<-done // wait until render loop is done
 }
 
 // Color sets the color for the spinner sprite
 func (s *Spinner) Color(c Color) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	if c == -1 {
 		s.sprite.color = nil
 	} else {
@@ -104,6 +115,9 @@ func (s *Spinner) Color(c Color) {
 
 // Print updates the status text of the spinner
 func (s *Spinner) Print(text string) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	s.text = text
 	s.dirty = true
 }
